@@ -12,16 +12,19 @@ nixPkgs = [
   "php83Extensions.fileinfo",
   "php83Extensions.tokenizer",
   "php83Extensions.openssl",
-  "composer"
+  "composer",
+  "nodejs_22"
 ]
 
 [phases.install]
 cmds = [
-  "composer install --no-dev --optimize-autoloader --no-interaction"
+  "composer install --no-dev --optimize-autoloader --no-interaction",
+  "npm install --no-audit --prefer-offline"
 ]
 
 [phases.build]
 cmds = [
+  "npm run build",
   "mkdir -p database",
   "touch database/database.sqlite",
   "mkdir -p storage/framework/sessions",
