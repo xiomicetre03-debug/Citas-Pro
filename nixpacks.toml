@@ -22,21 +22,10 @@ cmds = [
 
 [phases.build]
 cmds = [
-  # Copiar .env y generar clave de aplicacion
-  "cp .env.example .env",
-  "php artisan key:generate --force --ansi",
-
-  # Asegurar que existe la base de datos SQLite
   "mkdir -p database",
   "touch database/database.sqlite",
-
-  # Ejecutar migraciones
-  "php artisan migrate --force --ansi",
-
-  # Crear enlace simbolico de storage
+  "php artisan migrate --force",
   "php artisan storage:link --force || true",
-
-  # Cachear configuracion, rutas y vistas para mejor rendimiento
   "php artisan config:cache",
   "php artisan route:cache",
   "php artisan view:cache"
