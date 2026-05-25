@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Artisan;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -15,7 +16,7 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
-        // Crear carpetas necesarias si no existen
+        // Crear carpetas necesarias
         $dirs = [
             storage_path('framework/sessions'),
             storage_path('framework/views'),
@@ -23,7 +24,6 @@ class AppServiceProvider extends ServiceProvider
             storage_path('logs'),
             database_path(),
         ];
-
         foreach ($dirs as $dir) {
             if (!is_dir($dir)) {
                 mkdir($dir, 0775, true);
@@ -34,6 +34,13 @@ class AppServiceProvider extends ServiceProvider
         $sqlite = database_path('database.sqlite');
         if (!file_exists($sqlite)) {
             touch($sqlite);
+        }
+
+        // Correr migraciones si falta la tabla users
+        try {
+            \DB::select('SELECT 1 FROM users LIMIT 1');
+        } catch (\Exception $e) {
+            Artisan::call('migrate', ['--force' => true]);
         }
     }
 }
