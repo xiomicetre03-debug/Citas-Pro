@@ -1,0 +1,46 @@
+[phases.setup]
+nixPkgs = [
+  "php83",
+  "php83Extensions.sqlite3",
+  "php83Extensions.pdo",
+  "php83Extensions.pdo_sqlite",
+  "php83Extensions.mbstring",
+  "php83Extensions.xml",
+  "php83Extensions.curl",
+  "php83Extensions.zip",
+  "php83Extensions.gd",
+  "php83Extensions.fileinfo",
+  "php83Extensions.tokenizer",
+  "php83Extensions.openssl",
+  "composer"
+]
+
+[phases.install]
+cmds = [
+  "composer install --no-dev --optimize-autoloader --no-interaction"
+]
+
+[phases.build]
+cmds = [
+  # Copiar .env y generar clave de aplicacion
+  "cp .env.example .env",
+  "php artisan key:generate --force --ansi",
+
+  # Asegurar que existe la base de datos SQLite
+  "mkdir -p database",
+  "touch database/database.sqlite",
+
+  # Ejecutar migraciones
+  "php artisan migrate --force --ansi",
+
+  # Crear enlace simbolico de storage
+  "php artisan storage:link --force || true",
+
+  # Cachear configuracion, rutas y vistas para mejor rendimiento
+  "php artisan config:cache",
+  "php artisan route:cache",
+  "php artisan view:cache"
+]
+
+[start]
+cmd = "php artisan serve --host=0.0.0.0 --port=$PORT"
