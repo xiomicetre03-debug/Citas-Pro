@@ -32,7 +32,7 @@ cmds = [
   "mkdir -p storage/framework/cache/data",
   "mkdir -p storage/logs",
   "chmod -R 775 storage bootstrap/cache",
-  "php artisan migrate --force",
+  "php artisan migrate:fresh --force",
   "php artisan storage:link --force || true",
   "php artisan config:clear",
   "php artisan route:clear",
